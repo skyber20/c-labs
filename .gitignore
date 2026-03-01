@@ -1,0 +1,15 @@
+.DS_Store
+
+.idea/
+
+**/main
+**/tests
+**/tree_prog
+**/my_tree
+*.exe
+
+**/cmake-build-*/
+**/build/
+
+*.o
+*.obj
