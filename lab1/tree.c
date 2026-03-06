@@ -13,7 +13,7 @@ Node* findNode(Node *root, int value);
 
 int insertNode(Node *root, int parent_value, int value);
 
-int deleteNode(Node **root, int value);
+int deleteNode(Node **rootPtr, int value);
 
 Node* findParent(Node *root, int value);
 
