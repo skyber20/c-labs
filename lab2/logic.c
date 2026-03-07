@@ -20,6 +20,10 @@ int binarySearch(Table *table, int keyValue);
 
 void reverseTable(Table *table);
 
+void printTable(Table *table);
+
+void freeTable(Table *table);
+
 
 void initTable(Table *table) {
     table->keys = NULL;
@@ -41,6 +45,8 @@ void tableFromFile(Table *table, const char *filename) {
         exit(1);
     }
 
+    fgetc(file);
+
     table->keys = (int*)malloc(table->cnt * sizeof(int));
     table->values = (char**)malloc(table->cnt * sizeof(char*));
 
@@ -53,7 +59,19 @@ void tableFromFile(Table *table, const char *filename) {
     char buffer[256];
     for (int i = 0; i < table->cnt; i++) {
         fscanf(file, "%d", &table->keys[i]);
-        fscanf(file, "%s", buffer);
+        fgetc(file);
+
+        if (!fgets(buffer, sizeof(buffer), file)) {
+            fprintf(stderr, "Ошибка чтения строки\n");
+            fclose(file);
+            exit(1);
+        }
+
+        size_t len = strlen(buffer);
+        if (len > 0 && buffer[len-1] == '\n') {
+            buffer[len-1] = '\0';
+        }
+
 
         table->values[i] = (char*)malloc((strlen(buffer) + 1) * sizeof(char));
         if (!table->values[i]) {
@@ -139,7 +157,7 @@ int binarySearch(Table *table, int keyValue) {
 
 
 void reverseTable(Table *table) {
-    for (int i = 0; table->cnt / 2; i++) {
+    for (int i = 0; i < table->cnt / 2; i++) {
         swap(table, i, table->cnt - i - 1);
     }
 }
@@ -149,4 +167,22 @@ void printTable(Table *table) {
     for (int i = 0; i < table->cnt; i++) {
         printf("%d  %s\n", table->keys[i], table->values[i]);
     }
+}
+
+
+void freeTable(Table *table) {
+    if (table->keys != NULL) {
+        free(table->keys);
+        table->keys = NULL;
+    }
+
+    if (table->values != NULL) {
+        for (int i = 0; i < table->cnt; i++) {
+            free(table->values[i]);
+        }
+        free(table->values);
+        table->values = NULL;
+    }
+
+    table->cnt = 0;
 }
