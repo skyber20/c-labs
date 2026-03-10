@@ -45,8 +45,6 @@ void tableFromFile(Table *table, const char *filename) {
         exit(1);
     }
 
-    fgetc(file);
-
     table->keys = (int*)malloc(table->cnt * sizeof(int));
     table->values = (char**)malloc(table->cnt * sizeof(char*));
 
@@ -56,31 +54,26 @@ void tableFromFile(Table *table, const char *filename) {
         exit(1);
     }
 
-    char buffer[256];
     for (int i = 0; i < table->cnt; i++) {
         fscanf(file, "%d", &table->keys[i]);
         fgetc(file);
 
-        if (!fgets(buffer, sizeof(buffer), file)) {
+        char *line = NULL;
+        size_t len = 0;
+
+        if (getline(&line, &len, file) == -1) {
             fprintf(stderr, "Ошибка чтения строки\n");
+            free(line);
             fclose(file);
             exit(1);
         }
 
-        size_t len = strlen(buffer);
-        if (len > 0 && buffer[len-1] == '\n') {
-            buffer[len-1] = '\0';
+        int strLen = strlen(line);
+        if (strLen > 0 && line[strLen-1] == '\n') {
+            line[strLen-1] = '\0';
         }
 
-
-        table->values[i] = (char*)malloc((strlen(buffer) + 1) * sizeof(char));
-        if (!table->values[i]) {
-            fprintf(stderr, "Ошибка выделения памяти\n");
-            fclose(file);
-            exit(1);
-        }
-
-        strcpy(table->values[i], buffer);
+        table->values[i] = line;
     }
 
     fclose(file);
