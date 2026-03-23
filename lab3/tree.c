@@ -58,7 +58,45 @@ Node* createTree(Token *postfixHead) {
 Node *transformTree(Node *root) {
     if (!root) return NULL;
 
-    // TODO: ДОДЕЛАТЬ 20 ВАРИАНТ
+    root->left = transformTree(root->left);
+    root->right = transformTree(root->right);
+
+    if (root->type == NODE_OP && root->data.op == '/') {
+        // 1. (a / b) / c -> a / (b * c)
+        if (root->left && root->left->type == NODE_OP && root->left->data.op == '/') {
+            Node *l = root->left;
+            Node *a = l->left;
+            Node *b = l->right;
+            Node *c = root->right;
+
+            root->left = a;
+            l->data.op = '*';
+            l->left = b;
+            l->right = c;
+            root->right = l;
+
+            return root;
+        }
+
+        // 2. a / (b / c) -> (a / b) * c
+        if (root->right && root->right->type == NODE_OP && root->right->data.op == '/') {
+            Node *r = root->right;
+            Node *a = root->left;
+            Node *b = r->left;
+            Node *c = r->right;
+
+            root->data.op = '*';
+            root->right = c;
+            r->left = a;
+            r->right = b;
+            root->left = r;
+
+            return root;
+        }
+    }
+
+
+    return root;
 }
 
 
