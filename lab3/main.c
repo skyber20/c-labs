@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "structures.h"
 #include "parse_expr.h"
@@ -79,4 +80,6 @@ int main() {
 
         printf("\n");
     }
+
+    return 0;
 }

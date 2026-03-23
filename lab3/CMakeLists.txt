@@ -11,4 +11,5 @@ add_executable(lab3 main.c
         tree.c
         rpn.h
         stack.h
-        tree.h)
+        tree.h
+        tests.c)
