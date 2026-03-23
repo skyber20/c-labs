@@ -1,40 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-typedef enum {
-    TOK_NUM,
-    TOK_VAR,
-    TOK_OP,
-    TOK_LBRACKET,
-    TOK_RBRACKET,
-} TokenType;
-
-typedef struct Token {
-    TokenType type;
-    union {
-        int value;
-        char* varName;
-        char op;
-    } data;
-    struct Token* next;
-} Token;
-
-typedef enum {
-    NODE_NUM,
-    NODE_VAR,
-    NODE_OP
-} NodeType;
-
-typedef struct Node {
-    NodeType type;
-    union {
-        int value;
-        char* varName;
-        char op;
-    } data;
-    struct Node *left, *right;
-} Node;
+#include "structures.h"
 
 
 Token *createTokenNum(int value) {

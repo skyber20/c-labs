@@ -1,14 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef struct StackNode {
-    void *data;
-    struct StackNode *next;
-} StackNode;
-
-typedef struct {
-    StackNode *top;
-} Stack;
+#include "stack.h"
 
 
 void initStack(Stack *s) {

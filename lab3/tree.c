@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include "structures.c"
-#include "stack.c"
+#include "structures.h"
+#include "stack.h"
+#include "tree.h"
 
 
 Node* createTree(Token *postfixHead) {

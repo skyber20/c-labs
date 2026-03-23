@@ -1,9 +1,11 @@
 #include <ctype.h>
 #include <stdio.h>
-#include "structures.c"
+#include <stdlib.h>
+#include <string.h>
+#include "structures.h"
 
 
-char *ReadInput() {
+char *readInput() {
     char *line = NULL;
     size_t len = 0;
 
