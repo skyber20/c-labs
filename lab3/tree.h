@@ -9,4 +9,6 @@ Node *transformTree(Node *root);
 
 void printPostfixTree(Node *root, int indent);
 
+void printInfix(Node *node);
+
 #endif

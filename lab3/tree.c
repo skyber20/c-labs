@@ -118,3 +118,34 @@ void printPostfixTree(Node *root, int indent) {
 
     printPostfixTree(root->left, indent + 1);
 }
+
+
+void printInfix(Node *node) {
+    if  (!node) return;
+
+    if (node->type == NODE_OP) {
+        printf("(");
+    }
+
+    if (node->type == NODE_OP && node->data.op == '~') {
+        printf("-");
+    } else {
+        printInfix(node->left);
+    }
+
+    if (node->type == NODE_NUM) {
+        printf("%d", node->data.value);
+    } else if (node->type == NODE_VAR) {
+        printf("%s", node->data.varName);
+    } else {
+        if (node->type == NODE_OP && node->data.op != '~') {
+            printf("%c", node->data.op);
+        }
+    }
+
+    printInfix(node->right);
+
+    if (node->type == NODE_OP) {
+        printf(")");
+    }
+}

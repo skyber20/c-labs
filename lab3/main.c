@@ -74,6 +74,9 @@ int main() {
         printf("\nФункция из варианта (после трансформации):\n");
         printPostfixTree(root, 0);
 
+        printf("\nВывод инфиксной записи в строку после преобразования:\n");
+        printInfix(root);
+
         freeTokens(postfixTokens);
         freeTree(root);
         free(input);
