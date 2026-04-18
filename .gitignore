@@ -3,6 +3,7 @@
 .idea/
 
 sandbox/
+*tz.pdf
 **/main
 **/tests
 **/tree_prog
