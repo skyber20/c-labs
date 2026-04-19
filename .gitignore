@@ -4,6 +4,7 @@
 
 sandbox/
 *tz.pdf
+*.txt
 **/main
 **/tests
 **/tree_prog

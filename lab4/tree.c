@@ -25,30 +25,16 @@ RBTree* createRBTree() {
 }
 
 
-Node* grandparent(Node *n) {
-    return n->parent->parent;
-}
-
-
-Node* uncle(Node *n) {
-    Node *g = grandparent(n);
-
-    if (n->parent == g->left) {
-        return g->right;
-    }
-    return g->left;
-}
-
-
 void leftRotate(RBTree *tree, Node *x) {
     Node *y = x->right;
+    x->right = y->left;
 
     if (y->left != tree->NIL) {
         y->left->parent = x;
     }
 
     y->parent = x->parent;
-    if (x->parent == tree->root) {
+    if (x->parent == tree->NIL) {
         tree->root = y;
     } else if (x == x->parent->left) {
         x->parent->left = y;
@@ -63,13 +49,14 @@ void leftRotate(RBTree *tree, Node *x) {
 
 void rightRotate(RBTree *tree, Node *x) {
     Node *y = x->left;
+    x->left = y->right;
 
     if (y->right != tree->NIL) {
         y->right->parent = x;
     }
 
     y->parent = x->parent;
-    if (x->parent == tree->root) {
+    if (x->parent == tree->NIL) {
         tree->root = y;
     } else if (x == x->parent->right) {
         x->parent->right = y;
@@ -178,33 +165,157 @@ void insert(RBTree *tree, const char *key, float value) {
 }
 
 
-void printTreeHelper(RBTree *tree, Node *node, int depth) {
+void rbTransplant(RBTree *tree, Node *u, Node *v) {
+    if (u->parent == tree->NIL) {
+        tree->root = v;
+    } else if (u == u->parent->left) {
+        u->parent->left = v;
+    } else {
+        u->parent->right = v;
+    }
+    v->parent = u->parent;
+}
+
+
+Node* treeMinimum(RBTree *tree, Node *node) {
+    while (node->left != tree->NIL) {
+        node = node->left;
+    }
+    return node;
+}
+
+
+void deleteFixup(RBTree *tree, Node *x) {
+    while (x != tree->root && x->color == BLACK) {
+        if (x == x->parent->left) {
+            Node *w = x->parent->right;
+            // case 1
+            if (w->color == RED) {
+                w->color = BLACK;
+                x->parent->color = RED;
+                leftRotate(tree, x->parent);
+                w = x->parent->right;
+            }
+            // case 2
+            if (w->left->color == BLACK && w->right->color == BLACK) {
+                w->color = RED;
+                x = x->parent;
+            } else {
+                // case 3
+                if (w->right->color == BLACK) {
+                    w->left->color = BLACK;
+                    w->color = RED;
+                    rightRotate(tree, w);
+                    w = x->parent->right;
+                }
+                // case 4
+                w->color = x->parent->color;
+                x->parent->color = BLACK;
+                w->right->color = BLACK;
+                leftRotate(tree, x->parent);
+                x = tree->root;
+            }
+        } else {
+            Node *w = x->parent->left;
+            // case 1
+            if (w->color == RED) {
+                w->color = BLACK;
+                x->parent->color = RED;
+                rightRotate(tree, x->parent);
+                w = x->parent->left;
+            }
+            // case 2
+            if (w->right->color == BLACK && w->left->color == BLACK) {
+                w->color = RED;
+                x = x->parent;
+            } else {
+                // case 3
+                if (w->left->color == BLACK) {
+                    w->right->color = BLACK;
+                    w->color = RED;
+                    leftRotate(tree, w);
+                    w = x->parent->left;
+                }
+                // case 4
+                w->color = x->parent->color;
+                x->parent->color = BLACK;
+                w->left->color = BLACK;
+                rightRotate(tree, x->parent);
+                x = tree->root;
+            }
+        }
+    }
+    x->color = BLACK;
+}
+
+
+int deleteNode(RBTree *tree, const char *key) {
+    Node *z = searchNode(tree, key);
+    if (z == tree->NIL) return 0;
+
+    Node *y = z;
+    Node *x;
+    Color y_original_color = y->color;
+
+    if (z->left == tree->NIL) {
+        x = z->right;
+        rbTransplant(tree, z, z->right);
+    } else if (z->right == tree->NIL) {
+        x = z->left;
+        rbTransplant(tree, z, z->left);
+    } else {
+        y = treeMinimum(tree, z->right);
+        y_original_color = y->color;
+        x = y->right;
+        if (y->parent == z) {
+            x->parent = y;
+        } else {
+            rbTransplant(tree, y, y->right);
+            y->right = z->right;
+            y->right->parent = y;
+        }
+        rbTransplant(tree, z, y);
+        y->left = z->left;
+        y->left->parent = y;
+        y->color = z->color;
+    }
+
+    free(z);
+
+    if (y_original_color == BLACK) {
+        deleteFixup(tree, x);
+    }
+    return 1;
+}
+
+
+void printTreeHelper(RBTree *tree, Node *node, int depth, FILE *outputFile) {
     if (node == tree->NIL) {
         return;
     }
 
-    printTreeHelper(tree, node->right, depth + 1);
+    printTreeHelper(tree, node->right, depth + 1, outputFile);
 
     for (int i = 0; i < depth; i++) {
-        printf("    ");
+        fprintf(outputFile, "    ");
     }
 
     char c = (node->color == RED) ? 'R' : 'B';
-    printf("%s %.2f (%c)\n", node->key, node->value, c);
+    fprintf(outputFile, "%s %g (%c)\n", node->key, node->value, c);
 
-    printTreeHelper(tree, node->left, depth + 1);
+    printTreeHelper(tree, node->left, depth + 1, outputFile);
 }
 
 
-void printTree(RBTree *tree) {
+void printTree(RBTree *tree, FILE *outputFile) {
     if (tree->root == tree->NIL) {
-        printf("Дерево пустое\n");
+        fprintf(outputFile, "Дерево пустое\n\n");
         return;
     }
 
-    printf("Вывод дерева:\n");
-    printTreeHelper(tree, tree->root, 0);
-    printf("Конец вывода дерева\n");
+    fprintf(outputFile, "Вывод дерева:\n");
+    printTreeHelper(tree, tree->root, 0, outputFile);
+    fprintf(outputFile, "Конец вывода дерева\n\n");
 }
 
 
@@ -236,6 +347,24 @@ void searchValue(RBTree *tree, const char *key) {
     if (res == tree->NIL) {
         printf("%s нет в дереве\n", key);
     } else {
-        printf("Ключу %s соотвествует значение %.2f\n", key, res->value);
+        printf("Ключу %s соотвествует значение %g\n", key, res->value);
     }
+}
+
+
+void freeNodes(RBTree *tree, Node *node) {
+    if (node == tree->NIL) {
+        return;
+    }
+    
+    freeNodes(tree, node->left);
+    freeNodes(tree, node->right);
+    free(node);
+}
+
+
+void destroyRBTree(RBTree *tree) {
+    freeNodes(tree, tree->root);
+    free(tree->NIL);
+    free(tree);
 }
