@@ -42,6 +42,7 @@ make main
 
 **Запуск в файловом режиме:**
 ```bash
+make build_main
 ./main input.txt output.txt
 ```
 
