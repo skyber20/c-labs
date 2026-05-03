@@ -38,8 +38,15 @@ void upCapacity(Graph *g) {
 
 
 int addEdge(Graph *g, int from, int to, int weight) {
-    if (!g || from < 1 || from > g->numNodes || to < 1 || to > g->numNodes || weight < 0) {
+    if (!g || from < 1 || from > g->numNodes || to < 1 || to > g->numNodes || from == to || weight < 0) {
         return 0;
+    }
+
+    for (int i = 0; i < g->numEdges; i++) {
+        if (g->edges[i].from == from && g->edges[i].to == to) {
+            g->edges[i].weight = weight;
+            return 1;
+        }
     }
 
     if (g->numEdges == g->capacity) {

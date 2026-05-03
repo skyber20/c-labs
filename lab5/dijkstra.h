@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include "graph.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define INF 1000000000
 
 typedef struct {
@@ -24,5 +28,9 @@ Path *restorePath(DRes *result, int target);
 int writeDRes(FILE *output, DRes *result);
 void freePath(Path *path);
 void freeDRes(DRes *result);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -4,7 +4,7 @@
 #include "dijkstra.h"
 
 
-void printHelp(void) {
+static void printHelp(void) {
     printf("Команды:\n");
     printf("0 - выйти\n");
     printf("1 <filename> - загрузить граф из файла\n");
@@ -22,11 +22,11 @@ int main(void) {
     char filename[256];
     int from, to, weight, start;
 
-    printf("CLI для графа и алгоритма Дейкстры\n");
     printHelp();
 
     while (scanf("%31s", cmd) == 1) {
         if (strcmp(cmd, "0") == 0) {
+            printf("Bye Bye\n");
             break;
         }
 
@@ -43,7 +43,7 @@ int main(void) {
 
             FILE *file = fopen(filename, "r");
             if (!file) {
-                printf("Ошибка: не удалось открыть файл\n");
+                printf("Не удалось открыть файл\n");
                 continue;
             }
 
@@ -51,7 +51,7 @@ int main(void) {
             fclose(file);
 
             if (!newGraph) {
-                printf("Ошибка: не удалось прочитать граф\n");
+                printf("Не удалось прочитать граф\n");
                 continue;
             }
 
@@ -60,20 +60,20 @@ int main(void) {
             printf("Граф загружен\n");
         } else if (strcmp(cmd, "2") == 0) {
             if (!g || scanf("%d %d %d", &from, &to, &weight) != 3) {
-                printf("Ошибка: команда 2 <from> <to> <weight>\n");
+                printf("Ошибка синтаксива: 2 <from> <to> <weight>\n");
                 break;
             }
 
             printf(addEdge(g, from, to, weight) ? "Ребро добавлено\n" : "Ошибка: ребро не добавлено\n");
         } else if (strcmp(cmd, "3") == 0) {
             if (!g || scanf("%d", &start) != 1) {
-                printf("Ошибка: команда 3 <start>\n");
+                printf("Ошибка синтаксиса: 3 <start>\n");
                 break;
             }
 
             DRes *res = dijkstra(g, start);
             if (!res) {
-                printf("Ошибка: некорректная стартовая вершина\n");
+                printf("Инвалидная стартовая вершина\n");
                 continue;
             }
 
@@ -81,14 +81,14 @@ int main(void) {
             freeDRes(res);
         } else if (strcmp(cmd, "4") == 0) {
             if (!g || scanf("%d %255s", &start, filename) != 2) {
-                printf("Ошибка: команда 4 <start> <filename>\n");
+                printf("Ошибка синтаксиса: 4 <start> <filename>\n");
                 break;
             }
 
             DRes *res = dijkstra(g, start);
             FILE *file = fopen(filename, "w");
             if (!res || !file) {
-                printf("Ошибка: не удалось выполнить команду\n");
+                printf("Не удалось выполнить команду\n");
                 freeDRes(res);
                 if (file) fclose(file);
                 continue;
@@ -100,13 +100,13 @@ int main(void) {
             printf("Результат записан\n");
         } else if (strcmp(cmd, "5") == 0) {
             if (!g || scanf("%255s", filename) != 1) {
-                printf("Ошибка: команда 5 <filename>\n");
+                printf("Ошибка синтаксиса: 5 <filename>\n");
                 break;
             }
 
             FILE *file = fopen(filename, "w");
             if (!file) {
-                printf("Ошибка: не удалось создать файл\n");
+                printf("Не удалось создать файл\n");
                 continue;
             }
 
@@ -114,7 +114,7 @@ int main(void) {
             fclose(file);
             printf("Граф выгружен\n");
         } else {
-            printf("Ошибка: неизвестная команда\n");
+            printf("Была введена неизвестная команда\n");
         }
     }
 

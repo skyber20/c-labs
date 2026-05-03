@@ -3,6 +3,10 @@
 
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     int from;
     int to;
@@ -22,5 +26,9 @@ void upCapacity(Graph *g);
 int addEdge(Graph *g, int from, int to, int weight);
 Graph *readGraph(FILE *input);
 int writeGraph(FILE *output, const Graph *g);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
