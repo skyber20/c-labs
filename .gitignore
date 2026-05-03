@@ -1,10 +1,12 @@
 .DS_Store
-
+.venv
 .idea/
 
 sandbox/
 *tz.pdf
 *.txt
+!lab5/CMakeLists.txt
+!lab5/input.txt
 **/main
 **/tests
 **/tree_prog
@@ -16,3 +18,4 @@ sandbox/
 
 *.o
 *.obj
+lab5/benchmark.json
