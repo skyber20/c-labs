@@ -9,6 +9,8 @@ sandbox/
 !lab5/input.txt
 **/main
 **/tests
+!lab6/tests/
+!lab6/tests/**
 **/tree_prog
 **/my_tree
 *.exe
